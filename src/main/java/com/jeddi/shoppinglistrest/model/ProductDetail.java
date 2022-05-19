@@ -21,7 +21,7 @@ public class ProductDetail {
     private int quantity;
 
     @Column
-    private int memo;
+    private String memo;
 
     public void setId(long shoppinglist_id, int no) {
         id = new ProductDetailId();
