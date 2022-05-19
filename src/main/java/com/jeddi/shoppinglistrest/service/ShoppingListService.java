@@ -37,8 +37,12 @@ public class ShoppingListService {
 
     @Transactional
     public void postShoppingList(ShoppingListDto slDto) {
-        Optional<ShoppingList> sh = slRepo.findByTitle(slDto.getTitle());
-        if (sh.isPresent()) {
+        if (slDto.getTitle() == null || "".equals(slDto.getTitle())) {
+            throw new IllegalStateException("Shopping List Title can't be empty");
+        }
+
+        Optional<ShoppingList> sl = slRepo.findByTitle(slDto.getTitle());
+        if (sl.isPresent()) {
             throw new IllegalStateException("Shopping List Title is taken");
         }
 
@@ -49,7 +53,7 @@ public class ShoppingListService {
 
         // Map Product Detail DTO to Model
         if (slDto.getProductList() != null) {
-            List<ProductDetail> productDetails = new LinkedList<>();
+            List<ProductDetail> productDetails;
             if (!slDto.getProductList().isEmpty()) {
                 productDetails = mpSrvc.mapProductDetail(shoppingList.getId(), slDto.getProductList());
                 pdRepo.saveAll(productDetails);
