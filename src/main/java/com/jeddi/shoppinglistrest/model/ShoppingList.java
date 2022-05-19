@@ -32,7 +32,7 @@ public class ShoppingList {
     @Column
     private String title;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, orphanRemoval = true*/)
     @JoinColumn(name = "shoppinglist_id") // Pick the foreign key column
     private List<ProductDetail> productList;
 }

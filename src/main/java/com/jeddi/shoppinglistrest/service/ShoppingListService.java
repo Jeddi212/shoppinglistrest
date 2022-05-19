@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,5 +69,14 @@ public class ShoppingListService {
             return 1;
         }
         return shoppingList.getId() + 1;
+    }
+
+    @Transactional
+    public void deleteShoppingListById(Long shoppinglist_id) {
+        // Delete the child element first
+        pdRepo.deleteByShoppinglist_id(shoppinglist_id);
+
+        // Continue with parent deletion
+        slRepo.deleteById(shoppinglist_id);
     }
 }

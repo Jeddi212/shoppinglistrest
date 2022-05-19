@@ -35,4 +35,9 @@ public class ShoppingListController {
     public void postShoppingList(@RequestBody ShoppingListDto shoppingList) {
         shSrvc.postShoppingList(shoppingList);
     }
+
+    @DeleteMapping(path = "{shoppinglistid}")
+    public void deleteShoppingList(@PathVariable("shoppinglistid") Long shoppinglist_id) {
+        shSrvc.deleteShoppingListById(shoppinglist_id);
+    }
 }
