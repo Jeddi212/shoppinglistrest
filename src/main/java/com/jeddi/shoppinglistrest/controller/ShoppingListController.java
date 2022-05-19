@@ -36,6 +36,13 @@ public class ShoppingListController {
         shSrvc.postShoppingList(shoppingList);
     }
 
+    @PutMapping(path = "{shoppinglistid}")
+    public void updateShoppingList(
+            @PathVariable("shoppinglistid") Long shoppinglist_id,
+            @RequestBody ShoppingListDto shoppingList) {
+        shSrvc.updateShoppingList(shoppinglist_id, shoppingList);
+    }
+
     @DeleteMapping(path = "{shoppinglistid}")
     public void deleteShoppingList(@PathVariable("shoppinglistid") Long shoppinglist_id) {
         shSrvc.deleteShoppingListById(shoppinglist_id);

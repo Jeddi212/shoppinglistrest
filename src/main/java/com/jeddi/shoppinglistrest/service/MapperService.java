@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class MapperService {
 
-    public ShoppingList mapShoppingList(long shoppingListId, String title, List<ProductDetail> productDetails) {
+    public ShoppingList mapShoppingListForUpdate(long shoppingListId, String title, List<ProductDetail> productDetails) {
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setId(shoppingListId);
         shoppingList.setTitle(title);
@@ -22,11 +22,16 @@ public class MapperService {
         return shoppingList;
     }
 
-    public ShoppingList mapShoppingList(String title, List<ProductDetail> productDetails) {
+    public ShoppingList mapShoppingListForUpdate(String title, List<ProductDetail> productDetails) {
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setTitle(title);
         shoppingList.setDateTime(LocalDateTime.now().withNano(0));
         shoppingList.setProductList(productDetails);
+        return shoppingList;
+    }
+
+    public ShoppingList mapShoppingListForUpdate(ShoppingList shoppingList, String title) {
+        shoppingList.setTitle(title);
         return shoppingList;
     }
 

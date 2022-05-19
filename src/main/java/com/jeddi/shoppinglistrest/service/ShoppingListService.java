@@ -6,9 +6,11 @@ import com.jeddi.shoppinglistrest.model.ShoppingList;
 import com.jeddi.shoppinglistrest.repository.ProductDetailRepository;
 import com.jeddi.shoppinglistrest.repository.ShoppingListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ public class ShoppingListService {
     }
 
     public List<ShoppingList> getShoppingLists() {
-        return slRepo.findAll();
+        return slRepo.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public Optional<ShoppingList> getShoppingListById(Long shoppinglist_id) {
@@ -46,7 +48,7 @@ public class ShoppingListService {
         }
 
         // Map Shopping List DTO to Model
-        ShoppingList shoppingList = mpSrvc.mapShoppingList(slDto.getTitle(), null);
+        ShoppingList shoppingList = mpSrvc.mapShoppingListForUpdate(slDto.getTitle(), null);
 
         slRepo.save(shoppingList);
 
@@ -60,15 +62,38 @@ public class ShoppingListService {
         }
     }
 
-    public long lastShoppingListId()
-    {
-        // Get the last id from Shopping List table
-        ShoppingList shoppingList = slRepo.findTopByOrderByIdDesc();
-
-        if (shoppingList == null) {
-            return 1;
+    @Transactional
+    public void updateShoppingList(Long shoppingListId, ShoppingListDto slDto) {
+        Optional<ShoppingList> sl = slRepo.findById(shoppingListId);
+        if (sl.isEmpty()) {
+            throw new IllegalStateException("Shopping List with ID : {" + shoppingListId + "} not found");
         }
-        return shoppingList.getId() + 1;
+
+        if (slDto.getTitle() == null || "".equals(slDto.getTitle())) {
+            throw new IllegalStateException("Shopping List Title can't be empty");
+        }
+
+        if (slRepo.findByTitle(slDto.getTitle()).isPresent() && !sl.get().getTitle().equals(slDto.getTitle())) {
+            throw new IllegalStateException("Shopping List Title is exist, please change the title");
+        }
+
+        // Map Shopping List DTO to Model
+        ShoppingList shoppingList = mpSrvc.mapShoppingListForUpdate(sl.get(), slDto.getTitle());
+
+        // Save the shopping list first
+        slRepo.save(shoppingList);
+
+        // Clear current product detail
+//        pdRepo.deleteByShoppinglist_id(sl.get().getId());
+
+        // Map Product Detail DTO to Model
+        List<ProductDetail> productDetails = new LinkedList<>();
+        if (!slDto.getProductList().isEmpty()) {
+            productDetails = mpSrvc.mapProductDetail(shoppingListId, slDto.getProductList());
+        }
+
+        // Save the brand-new product detail
+        pdRepo.saveAll(productDetails);
     }
 
     @Transactional

@@ -21,7 +21,7 @@ public class ShoppingList {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
+            strategy = GenerationType.IDENTITY,
             generator = "shoppinglists_sequence"
     )
     private Long id;
@@ -32,7 +32,7 @@ public class ShoppingList {
     @Column
     private String title;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL/*, orphanRemoval = true*/)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "shoppinglist_id") // Pick the foreign key column
     private List<ProductDetail> productList;
 }
